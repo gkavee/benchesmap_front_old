@@ -1,7 +1,8 @@
 import './App.css';
 import BenchesMap from './components/Map/BenchesMap';
 import BenchesList from './components/BenchesList/BenchesList';
-// import AuthComponent from './components/Auth/AuthComponent';
+import AuthComponent from './components/Auth/AuthComponent';
+import CreateBenchModal from './components/Map/CreateBenchModal';
 
 function App() {
 
@@ -9,7 +10,8 @@ function App() {
     <>
       <BenchesMap />
       <BenchesList />
-      {/* <AuthComponent /> */}
+      <AuthComponent />
+      <CreateBenchModal />
     </>
   )
 }
