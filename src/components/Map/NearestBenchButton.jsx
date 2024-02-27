@@ -33,7 +33,7 @@ const NearestBenchButton = () => {
           .then(data => {
             map.flyTo([data.latitude, data.longitude], map.getZoom(), {
               animate: true,
-              duration: 0.4 // установите желаемую продолжительность в секундах
+              duration: 0.7
             });
           })
           .catch(error => {

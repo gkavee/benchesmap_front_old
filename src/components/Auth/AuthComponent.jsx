@@ -21,11 +21,37 @@ function AuthComponent() {
         const response = await axios.post('http://127.0.0.1:8000/auth/jwt/login', `username=${username}&password=${password}`, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
-            }
+            },
+            credentials: 'same-origin',
         });
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
-        Cookies.set('token', response.data.access_token, { path: '/' });
-        setIsLoggedIn(true);
+        var urlencoded = new URLSearchParams();
+        urlencoded.append("username", username);
+        urlencoded.append("password", password);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: urlencoded,
+            credentials: 'include',
+            redirect: 'manual',
+        }
+
+            fetch("http://127.0.0.1:8000/auth/jwt/login", requestOptions)
+                .then((response) => {
+                    if (response.ok) {
+                        
+                        // console.log('Cookie: '+response.headers.get('set-cookie'))
+                        // Cookies.set('token', response.headers.get('set-cookie'), { path: '/' });
+                        setIsLoggedIn(true);
+                    } else {
+                        alert('There was a problem');
+                    }
+                })
+                .catch(error => console.log('error', error))
+
     };
 
     const handleRegister = async (e) => {
@@ -40,13 +66,33 @@ function AuthComponent() {
         console.log(response.data);
     };
 
-    const handleLogout = async () => {
-        const response = await axios.post('http://127.0.0.1:8000/auth/jwt/logout');
+    // const handleLogout = async () => {
+    //     const response = await axios.post('http://127.0.0.1:8000/auth/jwt/logout');
 
-        console.log(response.data);
-        Cookies.remove('token', { path: '/' });
-        setIsLoggedIn(false);
-    };
+    //     console.log(response.data);
+    //     // Cookies.remove('token', { path: '/' });
+    //     setIsLoggedIn(false);
+    // };
+
+    const handleLogout = async () => {
+        const url = 'http://127.0.0.1:8000/auth/jwt/logout';
+      
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            redirect: 'manual',
+          });
+      
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+      
+          setIsLoggedIn(false);
+        } catch (error) {
+          console.error(error);
+        }
+      };      
 
     return (
         <div>
