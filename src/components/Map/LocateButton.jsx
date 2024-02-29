@@ -1,13 +1,12 @@
 import React from 'react';
 import { useMap } from 'react-leaflet';
-import Button from '@material-ui/core/Button';
+import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ReactDOM from 'react-dom';
-
+import MyLocationIcon from '@mui/icons-material/MyLocation';
 
 const useStyles = makeStyles((theme) => ({
     button: {
-      width: '140px',
       position: 'absolute',
       bottom: theme.spacing(2),
       right: theme.spacing(2),
@@ -19,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
         color: '#ddd',
       },
     },
-  }));
+}));
 
 const LocateButton = () => {
     const classes = useStyles();
@@ -35,7 +34,9 @@ const LocateButton = () => {
     };
   
     return ReactDOM.createPortal(
-      <Button className={classes.button} onClick={handleClick}>Locate me</Button>,
+      <IconButton className={classes.button} onClick={handleClick}>
+        <MyLocationIcon />
+      </IconButton>,
       document.body
     );
   };

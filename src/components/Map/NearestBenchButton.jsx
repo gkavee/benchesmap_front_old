@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useMap } from 'react-leaflet';
-import Button from '@material-ui/core/Button';
+import { IconButton } from '@material-ui/core';
+import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import { makeStyles } from '@material-ui/core/styles';
 import ReactDOM from 'react-dom';
 
 const useStyles = makeStyles((theme) => ({
     button: {
-      width: '140px',
       position: 'absolute',
-      bottom: theme.spacing(7.5),
+      bottom: theme.spacing(8.5),
       right: theme.spacing(2),
       backgroundColor: '#5C4033',
       color: '#F5DEB3',
@@ -43,7 +43,9 @@ const NearestBenchButton = () => {
     };
 
     return ReactDOM.createPortal(
-      <Button className={classes.button} onClick={handleClick}>Nearest bench</Button>,
+      <IconButton className={classes.button} onClick={handleClick}>
+        <NotListedLocationIcon />
+      </IconButton>,
       document.body
     );
 };

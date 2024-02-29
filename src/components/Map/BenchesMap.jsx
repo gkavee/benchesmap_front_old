@@ -3,22 +3,19 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { makeStyles } from '@material-ui/core/styles';
 import LocateButton from './LocateButton';
 import NearestBenchButton from './NearestBenchButton';
-import Grid from '@material-ui/core/Grid';
-import BenchCard from '../BenchesList/BenchCard';
+import CreateBenchModal from './CreateBenchModal'
+import BenchCard from '../Bench/BenchCard';
 import Loading from '../Loading';
 import L from 'leaflet';
 
 const useStyles = makeStyles((theme) => ({
   map: {
-    height: '98vh',
-    width: '100%',
-    zIndex: 1,
-  },
-  grid: {
     position: 'absolute',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-    zIndex: 2,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 1,
   },
 }));
 
@@ -60,7 +57,7 @@ const BenchesMap = () => {
     <MapContainer center={initialPosition} zoom={18} className={classes.map}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        attribution={false}
       />
       {benches.map((bench, index) => (
         <Marker key={index} position={[bench.Bench.latitude, bench.Bench.longitude]}>
@@ -76,6 +73,7 @@ const BenchesMap = () => {
       </Marker>
       <LocateButton />
       <NearestBenchButton />
+      <CreateBenchModal />
     </MapContainer>
   ) : null;
 };

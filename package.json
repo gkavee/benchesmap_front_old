@@ -12,7 +12,8 @@
   "dependencies": {
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
-    "@mui/material": "^5.15.9",
+    "@mui/icons-material": "^5.15.11",
+    "@mui/styled-engine": "^5.15.11",
     "axios": "^1.6.7",
     "js-cookie": "^3.0.5",
     "leaflet": "^1.9.4",

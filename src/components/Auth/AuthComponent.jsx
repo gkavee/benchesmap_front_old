@@ -1,29 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
+import CloseIcon from '@material-ui/icons/Close';
+import { Button, Dialog, DialogActions, DialogContent, TextField, Tabs, Tab, IconButton, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+    logoutButton: {
+      width: '40px',
+      position: 'absolute',
+      bottom: theme.spacing(7.5),
+      left: theme.spacing(2),
+      backgroundColor: 'red',
+      color: 'white',
+      zIndex: 2,
+      '&:hover': {
+        backgroundColor: 'darkred',
+        color: '#ddd',
+      },
+    },
+    loginButton: {
+        width: '40px',
+        position: 'absolute',
+        bottom: theme.spacing(7.5),
+        left: theme.spacing(2),
+        backgroundColor: 'blue',
+        color: 'white',
+        zIndex: 2,
+        '&:hover': {
+          backgroundColor: 'darkblue',
+          color: '#ddd',
+      },
+    },
+}));
 
 function AuthComponent() {
+    const classes = useStyles();
+
+    const [open, setOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(0);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isRegistered, setIsRegistered] = useState(false);
+    const [loginError, setLoginError] = useState(false);
+    const [registerError, setRegisterError] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(() => {
+        const storedValue = localStorage.getItem('loggedIn');
+        return storedValue ? JSON.parse(storedValue) : false;
+    });
 
     useEffect(() => {
-        const token = Cookies.get('token');
-        if (token) {
-            setIsLoggedIn(true);
-        }
-    }, []);
+        localStorage.setItem('loggedIn', JSON.stringify(isLoggedIn));
+    }, [isLoggedIn]);
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
+    const handleLogin = async (event) => {
+        event.preventDefault();
 
-        const response = await axios.post('http://127.0.0.1:8000/auth/jwt/login', `username=${username}&password=${password}`, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            credentials: 'same-origin',
-        });
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -36,43 +68,42 @@ function AuthComponent() {
             headers: myHeaders,
             body: urlencoded,
             credentials: 'include',
-            redirect: 'manual',
         }
 
-            fetch("http://127.0.0.1:8000/auth/jwt/login", requestOptions)
-                .then((response) => {
-                    if (response.ok) {
-                        
-                        // console.log('Cookie: '+response.headers.get('set-cookie'))
-                        // Cookies.set('token', response.headers.get('set-cookie'), { path: '/' });
-                        setIsLoggedIn(true);
-                    } else {
-                        alert('There was a problem');
-                    }
-                })
-                .catch(error => console.log('error', error))
-
+        fetch("http://127.0.0.1:8000/auth/jwt/login", requestOptions)
+            .then((response) => {
+                if (response.ok) {
+                    setIsLoggedIn(true);
+                    setOpen(false);
+                } else {
+                    setLoginError(true)
+                }
+            })
+            .catch(error => console.log('error', error))
     };
 
     const handleRegister = async (e) => {
         e.preventDefault();
-
-        const response = await axios.post('http://127.0.0.1:8000/auth/register', {
-            email: email,
-            password: password,
-            username: username
+    
+        const response = await fetch('http://127.0.0.1:8000/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                username: username
+            })
         });
-
-        console.log(response.data);
+    
+        if (response.ok) {
+            setIsRegistered(true);
+            console.log(await response.json())
+        } else {
+            setRegisterError(true)
+        }
     };
-
-    // const handleLogout = async () => {
-    //     const response = await axios.post('http://127.0.0.1:8000/auth/jwt/logout');
-
-    //     console.log(response.data);
-    //     // Cookies.remove('token', { path: '/' });
-    //     setIsLoggedIn(false);
-    // };
 
     const handleLogout = async () => {
         const url = 'http://127.0.0.1:8000/auth/jwt/logout';
@@ -92,27 +123,119 @@ function AuthComponent() {
         } catch (error) {
           console.error(error);
         }
-      };      
+      };
+      
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setIsRegistered(false)
+    };
+
+    const handleChange = (event, newValue) => {
+        setActiveTab(newValue);
+    };
 
     return (
         <div>
-            {!isLoggedIn ? (
-                <div>
-                    <form onSubmit={handleLogin}>
-                        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
-                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
-                        <button type="submit">Login</button>
-                    </form>
-                    <form onSubmit={handleRegister}>
-                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" />
-                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
-                        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
-                        <button type="submit">Register</button>
-                    </form>
-                </div>
+            {isLoggedIn ? (
+                <Button variant="contained" className={classes.logoutButton} onClick={handleLogout}>
+                    <LogoutIcon />
+                </Button>
             ) : (
-                <button onClick={handleLogout}>Logout</button>
+                <Button variant="contained" className={classes.loginButton}  onClick={handleOpen}>
+                   <LoginIcon />
+                </Button>
             )}
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+                <IconButton onClick={handleClose} style={{ position: 'absolute', right: '10px', top: '10px', zIndex: '2'}}>
+                    <CloseIcon />
+                </IconButton>
+                <Tabs value={activeTab} onChange={handleChange} centered style={{ zIndex: '1', backgroundColor: '#e7e1bcbe' }}>
+                    <Tab label="Вход" />
+                    <Tab label="Регистрация" />
+                </Tabs>
+                <DialogContent style={{ minWidth: '150px', minHeight: '180px', backgroundColor: '#e7e1bcbe' }}>
+                    {isRegistered ? (
+                        <p style={{ textAlign: 'center' }}>Ожидайте подтверждения</p>
+                    ) : (
+                        activeTab === 0 ? (
+                            <form onSubmit={handleLogin}>
+                                <TextField
+                                    margin="dense"
+                                    id="username"
+                                    label="Имя"
+                                    type="text"
+                                    fullWidth
+                                    value={username}
+                                    onChange={e => setUsername(e.target.value)}
+                                />
+                                <TextField
+                                    margin="dense"
+                                    id="password"
+                                    label="Пароль"
+                                    type="password"
+                                    fullWidth
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                />
+                                {loginError && (
+                                    <div style={{ color: 'red' }}>
+                                        <p>Ошибка входа</p>
+                                    </div>
+                                )}
+                                <DialogActions>
+                                    <Button type="submit" color="primary" style={{ justifyContent: 'flex-end', color: '#664229' }}>
+                                        Войти
+                                    </Button>
+                                </DialogActions>
+                            </form>
+                        ) : (                        
+                            <form onSubmit={handleRegister}>
+                                <TextField
+                                    margin="dense"
+                                    id="email"
+                                    label="Email"
+                                    type="email"
+                                    fullWidth
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                />
+                                <TextField
+                                    margin="dense"
+                                    id="username"
+                                    label="Имя"
+                                    type="text"
+                                    fullWidth
+                                    value={username}
+                                    onChange={e => setUsername(e.target.value)}
+                                />
+                                <TextField
+                                    margin="dense"
+                                    id="password"
+                                    label="Пароль"
+                                    type="password"
+                                    fullWidth
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                />
+                                {registerError && (
+                                    <div style={{ color: 'red' }}>
+                                        <p>Ошибка регистрации</p>
+                                    </div>
+                                )}
+                                <DialogActions>
+                                    <Button type="submit" color="primary" style={{ justifyContent: 'flex-end', color: '#664229' }}>
+                                        Зарегистрироваться
+                                    </Button>
+                                </DialogActions>
+                            </form>
+                        )
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
