@@ -51,6 +51,18 @@ function AuthComponent() {
 
     useEffect(() => {
         localStorage.setItem('loggedIn', JSON.stringify(isLoggedIn));
+
+        let timeoutId;
+
+        if (isLoggedIn) {
+            timeoutId = setTimeout(() => {
+                setIsLoggedIn(false);
+            }, 3600000);
+        }
+
+        return () => {
+            clearTimeout(timeoutId);
+        };
     }, [isLoggedIn]);
 
     const handleLogin = async (event) => {
