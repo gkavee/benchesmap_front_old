@@ -53,6 +53,29 @@ function AuthComponent() {
         localStorage.setItem('loggedIn', JSON.stringify(isLoggedIn));
     }, [isLoggedIn]);
 
+    useEffect(() => {
+        const checkSession = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/users/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (response.status === 401) {
+                    // Если статус 401, обновить isLoggedIn и localStorage
+                    setIsLoggedIn(false);
+                } else if (response.ok) {
+                    // Если статус 200, оставить все как есть
+                    // Возможно, здесь вы захотите получить и использовать дополнительные данные о пользователе
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        checkSession();
+    }, []); 
+
     const handleLogin = async (event) => {
         event.preventDefault();
 
