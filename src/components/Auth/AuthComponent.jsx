@@ -62,11 +62,8 @@ function AuthComponent() {
                 });
 
                 if (response.status === 401) {
-                    // Если статус 401, обновить isLoggedIn и localStorage
                     setIsLoggedIn(false);
                 } else if (response.ok) {
-                    // Если статус 200, оставить все как есть
-                    // Возможно, здесь вы захотите получить и использовать дополнительные данные о пользователе
                 }
             } catch (error) {
                 console.error(error);

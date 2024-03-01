@@ -33,8 +33,8 @@ const CreateBenchModal = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [hint, setHint] = useState('');
   const [bench, setBench] = useState({
-    name: '',
-    description: '',
+    name: null,
+    description: null,
     count: 0,
     latitude: 0,
     longitude: 0,
@@ -129,8 +129,8 @@ const CreateBenchModal = () => {
       setSuccessMessage('');
       setErrorMessage('');
       setBench({
-        name: '',
-        description: '',
+        name: null,
+        description: null,
         count: 1,
         latitude: 0,
         longitude: 0,
