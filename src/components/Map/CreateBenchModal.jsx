@@ -1,3 +1,4 @@
+import config from '../../config.js'
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -33,8 +34,8 @@ const CreateBenchModal = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [hint, setHint] = useState('');
   const [bench, setBench] = useState({
-    name: null,
-    description: null,
+    name: '',
+    description: '',
     count: 0,
     latitude: 0,
     longitude: 0,
@@ -57,7 +58,14 @@ const CreateBenchModal = () => {
   }, []);
 
   const handleSubmit = async () => {
-    const url = 'http://127.0.0.1:8000/bench/create';
+    if (!bench.name) {
+      setErrorMessage('Имя лавочки не может быть пустым');
+      setSuccessMessage('');
+      setErrorOccurred(true);
+      return;
+    }
+
+    const url = `${config.apiUrl}/bench/create`;
       
       try {
         const response = await fetch(url, {
@@ -73,7 +81,7 @@ const CreateBenchModal = () => {
           setSuccessMessage('Лавочка создана успешно');
           setErrorMessage('');
           setCreatedSuccessfully(true);
-          setErrorOccurred(false); // Сбрасываем флаг ошибки
+          setErrorOccurred(false);
         } else {
           setSuccessMessage('');
           setErrorMessage('Произошла ошибка при создании лавочки');
@@ -129,8 +137,8 @@ const CreateBenchModal = () => {
       setSuccessMessage('');
       setErrorMessage('');
       setBench({
-        name: null,
-        description: null,
+        name: '',
+        description: '',
         count: 1,
         latitude: 0,
         longitude: 0,

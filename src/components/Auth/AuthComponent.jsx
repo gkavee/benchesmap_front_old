@@ -1,3 +1,4 @@
+import config from '../../config.js'
 import React, { useState, useEffect } from 'react';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -56,7 +57,7 @@ function AuthComponent() {
     useEffect(() => {
         const checkSession = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/users/me', {
+                const response = await fetch(`${config.apiUrl}/users/me`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -90,7 +91,7 @@ function AuthComponent() {
             credentials: 'include',
         }
 
-        fetch("http://127.0.0.1:8000/auth/jwt/login", requestOptions)
+        fetch(`${config.authApiUrl}/jwt/login`, requestOptions)
             .then((response) => {
                 if (response.ok) {
                     setIsLoggedIn(true);
@@ -105,7 +106,7 @@ function AuthComponent() {
     const handleRegister = async (e) => {
         e.preventDefault();
     
-        const response = await fetch('http://127.0.0.1:8000/auth/register', {
+        const response = await fetch(`${config.authApiUrl}/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -126,7 +127,7 @@ function AuthComponent() {
     };
 
     const handleLogout = async () => {
-        const url = 'http://127.0.0.1:8000/auth/jwt/logout';
+        const url = `${config.authApiUrl}/jwt/logout`;
       
         try {
           const response = await fetch(url, {

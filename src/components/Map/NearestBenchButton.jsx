@@ -1,3 +1,4 @@
+import config from '../../config';
 import React from 'react';
 import { useMap } from 'react-leaflet';
 import { IconButton } from '@material-ui/core';
@@ -28,7 +29,7 @@ const NearestBenchButton = () => {
       navigator.geolocation.getCurrentPosition((position) => {
         const lat = position.coords.latitude;
         const long = position.coords.longitude;
-        fetch(`http://127.0.0.1:8000/nearest_bench/?latitude=${lat}&longitude=${long}`)
+        fetch(`${config.apiUrl}/nearest_bench/?latitude=${lat}&longitude=${long}`)
           .then(response => response.json())
           .then(data => {
             map.flyTo([data.latitude, data.longitude], map.getZoom(), {
